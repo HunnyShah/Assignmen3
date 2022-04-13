@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Web.Http;
 using Assignmen3.Models;
 using MySql.Data.MySqlClient;
+using System.Diagnostics;
 
 namespace Assignmen3.Controllers
 {
@@ -23,7 +24,8 @@ namespace Assignmen3.Controllers
         /// A list of authors (first names and last names)
         /// </returns>
         [HttpGet]
-        public IEnumerable<Teacher> ListTeacher()
+        [Route("api/TeacherData/ListTeacher/{SearchKey?}")]
+        public IEnumerable<Teacher> ListTeacher(string SearchKey= null)
         {
             //Create an instance of a connection
             MySqlConnection Conn = teacher.AccessDatabase();
@@ -35,7 +37,9 @@ namespace Assignmen3.Controllers
             MySqlCommand cmd = Conn.CreateCommand();
 
             //SQL QUERY
-            cmd.CommandText = "Select * from teachers";
+            cmd.CommandText = "SELECT * FROM teachers WHERE LOWER(teacherfname) like LOWER(@key) OR LOWER(teacherlname) LIKE LOWER(@key)";
+            cmd.Parameters.AddWithValue("@key", "%" + SearchKey + "%");
+            cmd.Prepare();
 
             //Gather Result Set of Query into a variable
             MySqlDataReader ResultSet = cmd.ExecuteReader();
@@ -59,6 +63,7 @@ namespace Assignmen3.Controllers
                 NewTeacher.TeacherFname = TeacherFname;
                 NewTeacher.TeacherLname= TeacherLname;
                 NewTeacher.EmployeeNo = EmployeeNo;
+                NewTeacher.Hiredate = Hiredate;
                 NewTeacher.salary = Salary;
 
                 //Add the Author Name to the List
@@ -112,11 +117,64 @@ namespace Assignmen3.Controllers
                 NewTeacher.TeacherFname = TeacherFname;
                 NewTeacher.TeacherLname = TeacherLname;
                 NewTeacher.EmployeeNo = EmployeeNo;
+                NewTeacher.Hiredate = Hiredate;
                 NewTeacher.salary = Salary;
 
             }
 
             return NewTeacher;
+        }
+        [HttpPost]
+        public void AddTeacher([FromBody] Teacher NewTeacher)
+        {
+            //Create an instance of a connection
+            MySqlConnection Conn = teacher.AccessDatabase();
+
+            Debug.WriteLine(NewTeacher.TeacherFname);
+
+            //Open the connection between the web server and database
+            Conn.Open();
+
+            //Establish a new command (query) for our database
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            //SQL QUERY
+            cmd.CommandText = "insert into teachers (teacherfname, teacherlname,employeenumber, hiredate , salary) values (@TeacherFname,@TeacherLname,@EmployeeNo, @Hiredate, @Salary)";
+            cmd.Parameters.AddWithValue("@TeacherFname", NewTeacher.TeacherFname);
+            cmd.Parameters.AddWithValue("@TeacherLname", NewTeacher.TeacherLname);
+            cmd.Parameters.AddWithValue("@EmployeeNo", NewTeacher.EmployeeNo);
+            cmd.Parameters.AddWithValue("@Hiredate", NewTeacher.Hiredate);
+            cmd.Parameters.AddWithValue("@Salary", NewTeacher.salary);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+
+        }
+        [HttpPost]
+        public void DeleteTeacher(int id)
+        {
+            //Create an instance of a connection
+            MySqlConnection Conn = teacher.AccessDatabase();
+
+            //Open the connection between the web server and database
+            Conn.Open();
+
+            //Establish a new command (query) for our database
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            //SQL QUERY
+            cmd.CommandText = "Delete from teachers where teacherid=@id";
+            cmd.Parameters.AddWithValue("@id", id);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+
         }
     }
 }
