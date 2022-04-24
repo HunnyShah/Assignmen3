@@ -74,5 +74,37 @@ namespace Assignmen3.Controllers
 
             return RedirectToAction("List");
         }
+
+        public ActionResult Update(int id)
+        {
+            TeacherdataController controller = new TeacherdataController();
+            Teacher SelectedTeacher = controller.FindTeacher(id);
+
+            return View(SelectedTeacher);
+        }
+
+        public ActionResult Ajax_Update(int id)
+        {
+            TeacherdataController controller = new TeacherdataController();
+            Teacher SelectedTeacher = controller.FindTeacher(id);
+
+            return View(SelectedTeacher);
+        }
+
+        [HttpPost]
+        public ActionResult Update(int id, string TeacherFname, string TeacherLname, string EmployeeNo, DateTime Hiredate , decimal Salary)
+        {
+            Teacher TeacherInfo = new Teacher();
+            TeacherInfo.TeacherFname = TeacherFname;
+            TeacherInfo.TeacherLname = TeacherLname;
+            TeacherInfo.EmployeeNo = EmployeeNo;
+            TeacherInfo.salary = Salary;
+            TeacherInfo.Hiredate = Hiredate;
+
+            TeacherdataController controller = new TeacherdataController();
+            controller.UpdateTeacher(id, TeacherInfo);
+
+            return RedirectToAction("Show/" + id);
+        }
     }
 }

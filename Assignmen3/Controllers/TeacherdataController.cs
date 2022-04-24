@@ -7,6 +7,7 @@ using System.Web.Http;
 using Assignmen3.Models;
 using MySql.Data.MySqlClient;
 using System.Diagnostics;
+//using System.Web.Http.Cors;
 
 namespace Assignmen3.Controllers
 {
@@ -176,5 +177,37 @@ namespace Assignmen3.Controllers
 
 
         }
+        [HttpPost]
+        //[EnableCors(origins: "*", methods: "*", headers: "*")]
+        public void UpdateTeacher(int id, [FromBody] Teacher TeacherInfo)
+        {
+            //Create an instance of a connection
+            MySqlConnection Conn = teacher.AccessDatabase();
+
+            //Debug.WriteLine(AuthorInfo.AuthorFname);
+
+            //Open the connection between the web server and database
+            Conn.Open();
+
+            //Establish a new command (query) for our database
+            MySqlCommand cmd = Conn.CreateCommand();
+
+            //SQL QUERY
+            cmd.CommandText = "update teachers set teacherfname=@TeacherFname, teacherlname=@TeacherLname, employeenumber=@EmployeeNo, hiredate=@Hiredate, salaary=@Salary  where authorid=@AuthorId";
+            cmd.Parameters.AddWithValue("@TeacherFname", TeacherInfo.TeacherFname);
+            cmd.Parameters.AddWithValue("@TeacherLname", TeacherInfo.TeacherLname);
+            cmd.Parameters.AddWithValue("@EmployeeNo", TeacherInfo.EmployeeNo);
+            cmd.Parameters.AddWithValue("@Hiredate", TeacherInfo.Hiredate);
+            cmd.Parameters.AddWithValue("@salary", TeacherInfo.salary);
+            cmd.Parameters.AddWithValue("@TeacherId", id);
+            cmd.Prepare();
+
+            cmd.ExecuteNonQuery();
+
+            Conn.Close();
+
+
+        }
+
     }
 }

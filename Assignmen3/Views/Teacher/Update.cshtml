@@ -1,0 +1,40 @@
+﻿@model Assignmen3.Models.Teacher
+@{
+    ViewBag.Title = "Update";
+}
+
+
+<div id="containershow">
+    <nav>
+        <a class="navlink" href="/Teacher/Show/@Model.TeacherId">Back</a>
+    </nav>
+    <h2>Update Teacher</h2>
+    <form method="POST" action="/Teacher/Update/@Model.TeacherId">
+        <div class="inputrow">
+            <label for="TeacherFname">First Name:</label>
+            <input type="text" id="TeacherFname" name="TeacherFname" value="@Model.TeacherFname" />
+
+        </div>
+        <div class="inputrow">
+            <label for="TeacherLname">Last Name:</label>
+            <input type="text" id="TeacherLname" name="TeacherLname" value="@Model.TeacherLname" />
+
+        </div>
+        <div class="inputrow">
+            <label for="EmployeeNo">Employee No:</label>
+            <input type="text" id="EmployeeNo" name="EmployeeNo" value="@Model.EmployeeNo" />
+        </div>
+        <div class="inputrow">
+            <label for="salary">Salary:</label>
+            <input type="number" id="salary" name="salary" value="@Model.salary" />
+        </div>
+        <div class="inputrow">
+            <label for="hiredate">Hire Date:</label>
+            <input type="datetime" id="hiredate" name="hiredate" value="@Model.Hiredate" />
+        </div>
+        <div class="inputrow">
+            <input type="submit" value="Update Teacher" />
+        </div>
+    </form>
+</div>
+
